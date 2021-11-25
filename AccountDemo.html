@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+    <head>
+        <script src="knockoutjs-v-3.5.1.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script>
+            $(document).ready(function(){
+                $("#button").click(function(){
+                    alert(accViewModel.Id() + " " +accViewModel.Balance())
+                })
+                $("#buttondep").click(function(){
+                    accViewModel.Balance(accViewModel.Balance()+Number($("#amount").val()))
+                })
+            })
+        </script>
+    </head>
+    <body>
+        <h2>Account Details</h2>
+        Id : <span data-bind="text: Id"></span><br>
+        Name : <span data-bind="text: Name"></span><br>
+        Balance :<span data-bind="text: Balance"></span><br>
+        <input type="button" id="button" value="ShowDetails">
+        <input type="button" id="buttondep" value="Deposit">
+        <input type="text" id="amount" >
+        <hr>
+        Id:  <input data-bind="value:Id"/><br><br>
+        Name:  <input data-bind="value:Name"/><br><br>
+        Balance:  <input data-bind="value:Balance"/><br><br>
+        <script>
+            // model
+            function account(id,name,balance){
+                this.Id = id;
+                this.Name = name;
+                this.Balance = balance;
+            }
+            //view model
+            function AccountViewModel(acc){
+                this.Id = ko.observable(acc.Id);
+                this.Name = ko.observable(acc.Name);
+                this.Balance = ko.observable(acc.Balance);
+            }
+            var acc = new account(1,"akil",1000);
+            var accViewModel = new AccountViewModel(acc);
+            ko.applyBindings(accViewModel);
+        </script>
+    </body>
+</html>
