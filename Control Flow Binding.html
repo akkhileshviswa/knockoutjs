@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+    <head>
+        <script src="knockoutjs-v-3.5.1.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <style>
+            .selected{
+                color:red;
+            }
+        </style>
+    </head>
+    <body>
+        <input type="checkbox" name="name" data-bind="checked: ShowHiddenSection">Show/hide
+        <div id="div1" data-bind="if: ShowHiddenSection">
+            This is a hidden section
+        </div>
+        <div id="div2" data-bind="visible: ShowHiddenSection">
+            This is a visible section
+        </div>
+        <hr>
+        <div>
+            City: <span data-bind="text:City"></span><br>
+            <span data-bind="with: Phone">
+                Home: <span data-bind="text:Home"></span><br>
+                Office: <span data-bind="text:Office"></span><br>
+            </span>
+        </div>
+        <hr>
+        <ul data-bind="foreach:Colors">
+            <li data-bind="text:$data"></li>
+        </ul>
+        <button onclick="alert(document.getElementById('div1').innerHTML)">Div1</button>
+        <button onclick="alert(document.getElementById('div2').innerHTML)">Div2</button>
+        <ul>
+            <li>Always Appear</li>
+            <!--ko if: ShowHiddenSection-->
+            <li>Dynamically appear or hide</li>
+            <!--/ko-->
+        </ul>
+        <hr>
+        <table data-bind="foreach:{data:Accounts,as:'Account'}">
+            <tr style="cursor:pointer" data-bind="click:$parent.SelectAccount, css: {selected:(Account.Id == ($parent.SelectedAccount() == null?-1:$parent.SelectedAccount().Id))}">
+                <td data-bind="text:($index()+1)+'/'+$parent.Count()"></td>
+                <td data-bind="text:Account.Id"></td>
+                <td data-bind="text:Account.Name"></td>
+                <td data-bind="text:Account.Balance"></td>
+                <!-- <td>
+                    <ul data-bind="foreach:{data:Deposits,as:'Amount'}">
+                        <li data-bind="text:(Account.Name+' Deposited '+Amount)"></li>
+                    </ul>
+                </td> -->
+                <td><button data-bind="click:$parent.SelectAccount, clickBubble:false">Select</button></td>
+            </tr>
+        </table>
+        <input type="text" data-bind="value:AmountToTransact">
+        <button data-bind="click:Deposit">Deposit</button>
+        <button data-bind="click:function(data){Withdraw(500)}">Withdraw</button>
+        <hr>
+        <div id="divbox" data-bind="event: {mouseover: enableDetails, mouseout: disableDetails}">
+            This div..
+        </div>
+
+        <script>
+            function account(id,name,balance,deposits){
+                this.Id = id;
+                this.Name = name;
+                this.Balance = ko.observable(balance);
+                this.Deposits = deposits;
+            }
+            var myViewModel = new function() {
+                this.City = ko.observable("Gobi");
+                this.Phone = {Home:786, Office:234};
+                this.ShowHiddenSection = ko.observable(true);
+                this.Colors = ko.observableArray(["Red","Blue","Pink"]);
+                this.Accounts = ko.observableArray([
+                new account(11,"ak",10000,[100,200]),
+                new account(12,"v",20000,[100,200]),
+                new account(13,"aki",30000,[100,200]),
+                ]);
+                this.Count = ko.computed(function(){
+                    return this.Accounts().length;
+                },this);
+                var current = this;
+                this.SelectedAccount=ko.observable(null);
+                this.SelectAccount=function(account) {
+                    current.SelectedAccount(account);
+                    //alert(account.Name);
+                };
+                this.AmountToTransact = ko.observable(0);
+                this.Deposit = function(){
+                    this.SelectedAccount().Balance(this.SelectedAccount().Balance() + Number(this.AmountToTransact()));
+                    //alert("Deposited");
+                };
+                this.Withdraw = function(minAmount) {
+                    if(this.SelectedAccount().Balance()-this.AmountToTransact() < minAmount)
+                        alert("Insufficient Balance");
+                    else
+                        this.SelectedAccount().Balance(this.SelectedAccount().Balance() - Number(this.AmountToTransact()));
+                };
+                this.enableDetails = function() {
+                    $("#divbox").css("border","1px solid red")
+                };
+                this.disableDetails = function() {
+                    $("#divbox").css("border","0px solid red")
+                };
+            }
+            ko.applyBindings(myViewModel);
+        </script>
+    </body>
+</html>

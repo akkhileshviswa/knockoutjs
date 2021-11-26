@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+    <head>
+        <script src="knockoutjs-v-3.5.1.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <style>
+            .redColor{
+                color:red;
+            }
+        </style>
+    </head>
+    <body>
+        <input type="range" min="1" max="100" name="number" data-bind="value:Number">
+        This number is <span data-bind="visible: isEvenNumber">Even</span>
+        <span data-bind="visible: isEvenNumber()==false">Odd</span> <!--ko text:Number--><!--/ko-->
+        <div data-bind="text: FormattedNumber"></div>
+        <div data-bind="html: FormattedNumber"></div>
+        <div data-bind="style: {color: displayColour}">Demo Text</div>
+        <div data-bind="css: {redColor: isEvenNumber}">This is red for even number</div>
+        <a data-bind="attr: {href: Urls()[Number()%2]}">Click Here</a>
+        <script>
+            var myViewModel =  function() {
+                this.Number = ko.observable(1);
+                this.isEvenNumber = ko.computed(function(){
+                    return this.Number()%2 == 0;
+                },this)
+                this.FormattedNumber = ko.computed(function(){
+                    return "<b>"+this.Number()+"</b>";
+                },this)
+                this.displayColour = ko.computed(function(){
+                    if( this.Number() > 50) {
+                        return "Red";
+                    }
+                    return "Green";
+                },this)
+                this.Urls = ko.observableArray(['red.com','green.com'])
+            }
+            ko.applyBindings(myViewModel);
+        </script>
+    </body>
+</html>
