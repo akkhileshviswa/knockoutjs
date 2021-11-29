@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+    <head>
+        <script src="knockoutjs-v-3.5.1.js"></script>
+        <script src="knockoutmapping.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script>
+            $(document).ready(function(){
+                $("#ConvertToJs").click(function(){
+                   var acc = myAccountViewModel.Accounts()[0];
+                   var accJS = ko.toJS(acc);
+                   alert(accJS.Id+" "+accJS.Balance);
+                })
+                $("#ConvertToJson").click(function(){
+                   var acc = myAccountViewModel.Accounts()[0];
+                   var accJsonString = ko.toJSON(acc);
+                   var accJson = JSON.parse(accJsonString);
+                   alert(accJson.Id);
+                })
+                $("#ConvertFromJs").click(function(){
+                   var acc = {Id:11, Name:"Akil", Balance:2324};
+                   var accViewModel = ko.mapping.fromJS(acc);
+                   alert(accViewModel.Id()+" "+accViewModel.Balance());
+                })
+                $("#ConvertFromJson").click(function(){
+                   var acc = '{"Id":"11", "Name":"Akil", "Balance":"2342"}';
+                   var accViewModel = ko.mapping.fromJSON(acc);
+                   alert(accViewModel.Id()+" "+accViewModel.Balance());
+                })
+            })
+        </script>
+    </head>
+    <body>
+        <table data-bind = "foreach: Accounts">
+            <tr>
+                <td data-bind = "text: Id"></td><br>
+                <td data-bind = "text: Name"></td><br>
+                <td data-bind = "value: Balance"></td><br>    
+            </tr>
+        </table>
+        <button id="ConvertToJs">Convert To Java</button>
+        <button id="ConvertToJson">Convert To Json</button>
+        <button id="ConvertFromJs">Convert From Java</button>
+        <button id="ConvertFromJson">Convert From Json</button>
+        <script>
+            function account(id,name,balance){
+                this.Id = ko.observable(id);
+                this.Name = ko.observable(name);
+                this.Balance = ko.observable(balance);
+            }
+
+            var myAccountViewModel = new function(){
+                this.Accounts = ko.observableArray([
+                new account(11,"ak",10000),
+                new account(12,"v",20000),
+                new account(13,"aki",30000),
+                ]);
+            } 
+            ko.applyBindings(myAccountViewModel);
+        </script>
+    </body>
+</html>

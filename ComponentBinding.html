@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+    <head>
+        <script src="knockoutjs-v-3.5.1.js"></script>
+    </head>
+    <body>
+        <table data-bind = "foreach: Accounts">
+            <tr>
+                <td data-bind = "text: Id"></td><br>
+                <td data-bind = "text: Name"></td><br>
+                <td data-bind = "text: Balance"></td><br>
+                <td>
+                    <span data-bind = "component: {name:'transaction-component',params:{AccountHoldersName:Name, Amounts:Transaction}}"></span>
+                </td>
+            </tr>
+        </table>
+        <script>
+            function account(id,name,balance,transaction){
+                this.Id = id;
+                this.Name = name;
+                this.Balance = ko.observable(balance);
+                this.Transaction = transaction;
+            }
+
+            var myAccountViewModel = function(){
+                this.Accounts = ko.observableArray([
+                new account(11,"ak",10000,[100,200]),
+                new account(12,"v",20000,[100,200]),
+                new account(13,"aki",30000,[100,200]),
+                ]);
+            }
+
+            function TransactionViewModel(params){
+                this.Amounts = params.Amounts;
+                this.AccountHoldersName = params.AccountHoldersName;
+                
+            }
+
+            ko.components.register('transaction-component',{
+                viewModel: TransactionViewModel,
+                template:"<ul data-bind='foreach:Amounts'>\
+                            <li><span data-bind='text: $parent.AccountHoldersName'></span> deposited <span data-bind='text: $data'></span></li>\
+                            </ul>"
+            })
+            
+            ko.applyBindings(new myAccountViewModel);
+        </script>
+    </body>
+</html>

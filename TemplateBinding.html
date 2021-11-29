@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+    <head>
+        <script src="knockoutjs-v-3.5.1.js"></script>
+    </head>
+    <body>
+        Name: <span data-bind = "text: Name"></span><br>
+        Residence Address:
+        <div data-bind = "template:{name:'address-template', data:ResidenceAddress}"></div><br>
+        <br>Office Address: 
+        <div data-bind = "template:{name:'address-template', data:OfficeAddress, if:OfficeAddress!=null}"></div><br>
+        <hr>
+        <table data-bind="template:{name:TemplateName, foreach:Accounts}"></table>
+        <script id = "address-template" type="text/html">
+            Street:<span data-bind = "text: Street"></span><br>
+            City:<span data-bind = "text: City"></span><br>
+            State:<span data-bind = "text: State"></span><br>
+        </script>
+        <script id = "high-acc-template" type="text/html">
+            <tr style="color: green">
+                <td data-bind = "text: Id"></td><br>
+                <td data-bind = "text: Name"></td><br>
+                <td data-bind = "text: Balance"></td><br>
+            </tr>
+        </script>
+        <script id = "low-acc-template" type="text/html">
+            <tr style="color: red">
+                <td data-bind = "text: Id"></td><br>
+                <td data-bind = "text: Name"></td><br>
+                <td data-bind = "text: Balance"></td><br>
+            </tr>
+        </script>
+        <script>
+            function Address(street, city, state){
+                this.Street = street;
+                this.City = city;
+                this.State = state;
+            }
+            function account(id,name,balance){
+                this.Id = id;
+                this.Name = name;
+                this.Balance = ko.observable(balance);
+            }
+            var PersonViewModel = function(){
+                this.Name = ko.observable("Akil");
+                this.ResidenceAddress = new Address("K Street","a","b");
+                this.OfficeAddress = null;//new Address("A Street","b","c");
+                this.Accounts = ko.observableArray([
+                new account(11,"ak",10000),
+                new account(12,"v",20000),
+                new account(13,"aki",30000),
+                ]);
+                this.TemplateName = function(account) {
+                    if(account.Balance() < 15000) {
+                        return "low-acc-template";
+                    } else {
+                        return "high-acc-template";
+                    }
+                };
+            }            
+            ko.applyBindings(new PersonViewModel);
+        </script>
+    </body>
+</html>
